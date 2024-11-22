@@ -6,7 +6,7 @@ from pybricks.parameters import Port, Stop, Direction, Button, Color
 from pybricks.tools import wait, StopWatch, DataLog
 from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
-
+import time
 
 # This program requires LEGO EV3 MicroPython v2.0 or higher.
 # Click "Open user guide" on the EV3 extension tab for more information.
@@ -34,7 +34,6 @@ def motion1():
     '''
     팔을 최대한 위로 옮기기
     '''
-    grab_arm.reset_angle(0)
     grab_arm.run_until_stalled(-200,duty_limit=30)
     grab_high_angle = grab_arm.angle()
 
@@ -51,9 +50,22 @@ def motion3():
     공을 잡기위해 팔을 최대한 아래로 옮기기
     '''
     grab_arm.run_until_stalled(200,duty_limit=30)
-    grab_low_angle = grab_arm.angle()
+    grab_arm.reset_angle(0)
 
-motion1()
-motion2()
+def shoot_motion1():
+    shooting_arm.run_until_stalled(-200,duty_limit=30)
+    shooting_arm.reset_angle(0)
+
+def shoot_motion2():
+    motion1()
+    shooting_arm.run(2000)
+    time.sleep(0.3)
+    shooting_arm.stop()
+
+# motion1()
+# motion2()
+shoot_motion1()
+shoot_motion2()
+shoot_motion1()
 # robot.straight(100)
 
