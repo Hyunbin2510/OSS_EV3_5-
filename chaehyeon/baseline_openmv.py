@@ -4,22 +4,22 @@ from pyb import UART
 '''
 (벽 왼쪽 부터 반시계방향으로 A,B,C,D)
 A{
-rgb:(160,220,40,70,10,40)
+rgb:(150,200,40,100,0,50)
 distance:20
 area:100
 }
 B:{
-rgb:(130,200,40,100,10,70)
+rgb:(160,210,60,190,0,50)
 distance:20
 area:100
 }
 C:{
-rgb:(130,200,40,100,10,70)
+rgb:(160,250,90,150,0,60)
 distance:20
 area:100
 }
 D:{
-rgb:(130,200,40,100,10,70)
+rgb:(160,250,60,140,0,60)
 distance:20
 area:100
 }
@@ -49,7 +49,7 @@ class Blob:
         return self.w * self.h  # 사각형 면적 계산
 
 # 3단계 코드: 특정 색상 범위로 블롭 감지
-threshold_red = (200, 260, 120, 170 ,10,70)
+threshold_red = (160,250,60,140,0,60)
 
 def find_blobs(img, threshold):
     width = img.width()
@@ -66,7 +66,7 @@ def find_blobs(img, threshold):
     return blobs
 
 # 4단계 코드: 블롭 병합
-def merge_blobs(blobs, distance_threshold=50):
+def merge_blobs(blobs, distance_threshold=20):
     merged_blobs = []
 
     while blobs:

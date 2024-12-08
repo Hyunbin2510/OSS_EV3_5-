@@ -74,24 +74,24 @@ def pd_control(cam_data, kp, kd, power):
 def grab(command):
     if command == 'motion3':
         #close
-        grab_motor.run_until_stalled(200,Stop.COAST,duty_limit=50)
+        grab_motor.run_until_stalled(300,Stop.COAST,duty_limit=40)
         #set_zero point
         grab_motor.reset_angle(0)
     elif command == 'motion1':
         #open1
-        grab_motor.run_until_stalled(-200,Stop.COAST,duty_limit=50)
+        grab_motor.run_until_stalled(-300,Stop.COAST,duty_limit=40)
     elif command == 'motion2':
         #open2
-        grab_motor.run_target(100,-100)
+        grab_motor.run_target(300,-100)
 
 def shoot(command):
     if command == 'zero':
         #zero_position
-        shooting_motor.run_until_stalled(-100,Stop.COAST,duty_limit=50)
+        shooting_motor.run_until_stalled(-300,Stop.COAST,duty_limit=40)
     elif command == 'shoot':
         #shooting
-        shooting_motor.run(1800)
-        time.sleep(0.2)
+        shooting_motor.run(4000)
+        time.sleep(0.3)
         shooting_motor.stop()
 
 
@@ -102,24 +102,24 @@ threshold = 80
 previous_error = 0
 gyro.reset_angle(0)
 #==========[zero set position setting]==========
-# shoot('zero') #shoot 모터가 안쪽이고,
-# grab('motion3') #grab 모터가 바깥쪽이므로 shoot먼저 세팅 후 grab을 세팅해야한다
-# time.sleep(1)
-# grab('motion1') #공을 잡기 위한 높이로 열기
+shoot('zero') #shoot 모터가 안쪽이고,
+grab('motion3') #grab 모터가 바깥쪽이므로 shoot먼저 세팅 후 grab을 세팅해야한다
+time.sleep(0.1)
+grab('motion1') #공을 잡기 위한 높이로 열기
 
-# print("Zero set postion completed")
+print("Zero set postion completed")
 
 #==========[test loop]==========
-#robot.straight(100) #강제로 앞으로 이동
+#robot.straight(100) #강제로 앞으로 이동0
 #todo 알고리즘 작성
 grab('motion3') #공을 잡기
-time.sleep(1) #동작간 딜레이
+time.sleep(0.1) #동작간 딜레이
 turn(0,100) #정면(상대방 진영)바라보기
-time.sleep(1) #동작간 딜레이
+time.sleep(0.1) #동작간 딜레이
 grab('motion1') #슛을 위한 열기
-time.sleep(0.5) #동작간 딜레이
+time.sleep(0.1) #동작간 딜레이
 shoot('shoot') #공 날리기
-time.sleep(0.5) #동작간 딜레이
+time.sleep(0.1) #동작간 딜레이
 shoot('zero')
 grab('motion2') 
 
@@ -127,6 +127,7 @@ grab('motion2')
 # #==========[main loop]==========
 # while True:
 #     data = ser.read_all()
+#     print(data)
 #     # 데이터 처리 및 결과 필터링
 #     try:
 #         filter_result = process_uart_data(data)
@@ -134,17 +135,18 @@ grab('motion2')
 #         if filter_result[0]!= -1 and filter_result[1]!= -1:
 #         # if filter_result[0]!= -1 and filter_result[1]!= -1:
 #             if filter_result[1] > 90: #공이 카메라 화면 기준으로 아래에 위치 = 로봇에 가까워졌다
+#                 print(filter_result)
 #                 robot.straight(100) #강제로 앞으로 이동
 #                 grab('motion3') #공을 잡기
-#                 time.sleep(1) #동작간 딜레이
+#                 time.sleep(0.1) #동작간 딜레이
 #                 turn(0,100) #정면(상대방 진영)바라보기
-#                 time.sleep(1) #동작간 딜레이
+#                 time.sleep(0.1) #동작간 딜레이
 #                 grab('motion1') #슛을 위한 열기
-#                 time.sleep(0.5) #동작간 딜레이
+#                 time.sleep(0.1) #동작간 딜레이
 #                 shoot('shoot') #공 날리기
-#                 time.sleep(0.5) #동작간 딜레이
+#                 time.sleep(0.1) #동작간 딜레이
 #                 shoot('zero')
-#                 grab('motion2') 
+#                 grab('motion2')  
 #             else: #공이 카메라 화면 기준 멀리 위치해 있으면 chase한다
 #                 pd_control(filter_result[0], kp=0.5, kd=0.1, power=100)
 #         # else: # 센서가 공을 보지 못했을 경우의 움직임.
@@ -155,15 +157,5 @@ grab('motion2')
 #     except:
 #         pass
 
-# while True:
-#     try:
-#         data = ser.read_all()
-#         filter_result = process_uart_data(data)
-#         if filter_result[0]!= -1 and filter_result[1]!= -1:
-#             print(filter_result)
-#             pd_control(filter_result[0], kp=0.5, kd=0.1, power=100)
-#         wait(10)
-#     except:
-#         pass
         
 
