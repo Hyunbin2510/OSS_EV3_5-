@@ -3,28 +3,30 @@ import time
 from pyb import UART
 '''
 (벽 왼쪽 부터 반시계방향으로 A,B,C,D)
+(벽 왼쪽 부터 반시계방향으로 A,B,C,D)
 A{
-rgb:(160,220,40,70,10,40)
+rgb:(150,200,40,100,0,50)
 distance:20
 area:100
 }
 B:{
-rgb:(130,200,40,100,10,70)
+rgb:(160,210,60,190,0,50)
 distance:20
 area:100
 }
 C:{
-rgb:(130,200,40,100,10,70)
+rgb:(160,250,90,150,0,60)
 distance:20
 area:100
 }
 D:{
-rgb:(130,200,40,100,10,70)
+rgb:(160,250,60,140,0,60)
 distance:20
 area:100
 }
 '''
-threshold_red = (160,220,40,70,10,40)
+
+threshold_red = (160,250,90,150,0,60)
 MIN_AREA_THRESHOLD = 100  # 필터링 임계값 설정
 DISTANCE_THRESHOLD = 20   # 거리 임계값 설정
 
