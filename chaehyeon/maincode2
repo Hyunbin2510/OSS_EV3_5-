@@ -1,0 +1,61 @@
+import time
+from ev3dev2.motor import LargeMotor, OUTPUT_A, OUTPUT_B
+from ev3dev2.sensor.lego import UltrasonicSensor
+from ev3dev2.sensor import INPUT_1
+
+motor_arm = LargeMotor(OUTPUT_A)  # 로봇 팔 모터
+motor_shoot = LargeMotor(OUTPUT_B)  # 슈팅 모터
+ultrasonic_sensor = UltrasonicSensor(INPUT_1)  # 초음파 센서로 거리 측정
+
+ZERO_POSITION = 0
+
+def move_arm_to_position(position):
+    motor_arm.on_to_position(speed=20, position_sp=position)
+    time.sleep(1)
+
+
+def shoot():
+    motor_shoot.on_for_seconds(speed=100, seconds=0.5)
+    time.sleep(0.5)
+
+def get_ball_position_from_openmv():
+    x, y = 320, 240
+    return x, y
+
+def avoid_wall():
+    distance = ultrasonic_sensor.distance_centimeters
+    if distance < 5:  
+        motor_arm.on_for_seconds(speed=-50, seconds=1)
+
+
+def main():
+    try:
+        move_arm_to_position(ZERO_POSITION)
+
+        while True:
+            x, y = get_ball_position_from_openmv()
+            print(f"공 발견: ({x}, {y})")
+
+            move_arm_to_position(MIDDLE_POSITION)
+           
+            distance = ultrasonic_sensor.distance_centimeters
+            while distance > 10:  
+                avoid_wall() 
+                distance = ultrasonic_sensor.distance_centimeters
+
+          
+            move_arm_to_position(ZERO_POSITION)
+            time.sleep(1)
+
+            
+            move_arm_to_position(HIGH_POSITION)
+            shoot()
+
+         
+            move_arm_to_position(ZERO_POSITION)
+
+    except KeyboardInterrupt:
+        print("프로그램 종료.")
+
+if __name__ == "__main__":
+    main()
