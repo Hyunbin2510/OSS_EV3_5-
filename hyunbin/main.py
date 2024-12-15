@@ -25,23 +25,19 @@ robot.settings(straight_speed = 200)
 
 #==========[target_angle turn(gyro)]==========
 def turn(target_angle, power):
-    
-    # left_motor.run(power)
-    # right_motor.run(-power)
-    # while True:
-    #     angle=gyro.angle()
-        
-    #     if abs(angle)>target_angle-2:
-    #         left_motor.stop()
-    #         right_motor.stop()
-    #         break
-    # robot.turn()
+    angle = gyro.angle()%360
     print('robot turn')
-    robot.drive(power, power)
+    robot.straight(-70)
+    if 0 <= anlge < 180:
+        robot.drive(0, power)
+    else:
+        robot.drive(0,-power)
+
     while True:
-        angle = gyro.angle()
+        
+        angle = gyro.angle()%360
         print(angle)
-        if abs(angle)>target_angle-2:
+        if angle <= target_angle+2:
             robot.stop()
             break
 
@@ -94,7 +90,7 @@ def grab(command):
         #open2
         grab_motor.run_target(500,-100)
     elif command == 'motion4':
-        grab_motor.run_until_stalled(300,Stop.COAST,duty_limit=30)
+        grab_motor.run_until_stalled(500,Stop.COAST,duty_limit=30)
 
 def shoot(command):
     if command == 'zero':
@@ -123,11 +119,9 @@ grab('motion2')
 print("Zero set postion completed")
 
 #==========[test loop]==========
-#robot.straight(100) #강제로 앞으로 이동0
-#todo 알고리즘 작성
-
 
 #==========[main loop]==========
+iteration = 0
 while True:
     data = ser.read_all()
     print(data)
@@ -138,23 +132,40 @@ while True:
         #filter_result[0] : x, filter_result[1] : y
         if filter_result[0]!= -1 and filter_result[1]!= -1:
         # if filter_result[0]!= -1 and filter_result[1]!= -1:
-            if filter_result[1] > 95: #공이 카메라 화면 기준으로 아래에 위치 = 로봇에 가까워졌다
+            if filter_result[1] > 90:
                 print(filter_result)
-                robot.straight(50) #강제로 앞으로 이동
+                robot.straight(85) #강제로 앞으로 이동
                 grab('motion4') 
+                robot.straight(-70)
+                robot.turn(20)
                 time.sleep(0.2) #동작간 딜레이
                 grab('motion1') #슛을 위한 열기
                 time.sleep(0.1) #동작간 딜레이
                 shoot('shoot') #공 날리기
                 time.sleep(0.1) #동작간 딜레이
                 shoot('zero')
-                grab('motion2')  
+                grab('motion2')
+                robot.turn(-20) 
             else: #공이 카메라 화면 기준 멀리 위치해 있으면 chase한다
-                pd_control(filter_result[0], kp=0.5, kd=0.1, power=200)
+                pd_control(filter_result[0], kp=0.5, kd=0.1, power=150)
+                
         else: # 센서가 공을 보지 못했을 경우의 움직임.
-            robot.straight(50)
-            robot.turn(10)
-
+            # todo 알고리즘 추가하기
+            if iteration%5 == 0:
+                robot.straight(100)
+            elif iteration%5 == 1:
+                robot.turn(30)
+                time.sleep(0.1)
+            elif iteration%5 == 2:
+                robot.turn(-30)
+                
+            elif iteration%5 == 3:
+                robot.turn(-30)
+                time.sleep(0.1)
+            elif iteration%5 == 4:
+                robot.turn(30)
+            iteration += 1
+            print(iteration)
         time.sleep_ms(50)
     except:
         pass
